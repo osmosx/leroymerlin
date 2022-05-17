@@ -1,0 +1,51 @@
+version: "3.9"
+services:
+
+  postgres:
+    container_name: postgres_container
+    image: postgres:14.2
+
+    environment:
+      POSTGRES_DB: "intern"
+      POSTGRES_USER: "intern"
+      POSTGRES_PASSWORD: "intern"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - ./create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
+      - .:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U intern -d intern"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 4G
+    networks:
+      - mynet
+
+  webapp:
+    container_name: webapp
+    build:
+      context: ./
+    image: nenvoy42/dockerhub:leroymerlin
+    depends_on:
+      - postgres
+    ports:
+      - 8080:8080
+    links:
+      - postgres
+    volumes:
+      - './:/src'
+    networks:
+      - mynet
+
+networks:
+  mynet:
+    driver: bridge
