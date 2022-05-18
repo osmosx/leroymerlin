@@ -12,6 +12,9 @@ RUN go mod init something
 RUN go mod tidy
 RUN go build
 RUN go install github.com/lib/pq
+RUN go get -d github.com/gorilla/mux
+
+
 
 RUN make build
 

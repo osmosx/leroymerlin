@@ -7,6 +7,8 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/mux"
+
 	_ "github.com/lib/pq"
 )
 
@@ -23,10 +25,6 @@ const (
 	password = "intern"
 	dbname   = "intern"
 )
-
-// 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-// 		"password=%s dbname=%s sslmode=disable",
-// 		host, port, user, password, dbname)
 
 func OpenConnection() *sql.DB {
 	psqlInfo := fmt.Sprintf("postgres://%v:%v@%v:%v/%v?sslmode=disable",
@@ -92,8 +90,9 @@ func POSTHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	r := mux.NewRouter()
 	fmt.Println("Hello Leroy Merlin")
-	http.HandleFunc("/", GETHandler)
-	http.HandleFunc("/intern", POSTHandler)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	r.HandleFunc("/intern", POSTHandler).Methods("POST")
+	r.HandleFunc("/intern", GETHandler).Methods("GET")
+	log.Fatal(http.ListenAndServe(":8080", r))
 }

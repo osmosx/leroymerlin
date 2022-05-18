@@ -3,8 +3,7 @@ services:
 
   postgres:
     container_name: postgres_container
-    image: postgres:14.2
-
+    image: postgres:latest
     environment:
       POSTGRES_DB: "intern"
       POSTGRES_USER: "intern"
@@ -34,7 +33,7 @@ services:
     container_name: webapp
     build:
       context: ./
-    image: nenvoy42/dockerhub:leroymerlin
+    image: nenvoy42/dockerhub:leroymerlin2
     depends_on:
       - postgres
     ports:
